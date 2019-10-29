@@ -1,0 +1,25 @@
+void setup() {
+  // put your setup code here, to run once:
+#include <Servo.h>
+Servo myservo;
+const int piezo = AO;
+const int switchPin = 2;
+const int yellowLed = 3; 
+const int greenLed = 4; 
+const int redLed = 5;
+const int Servo = 9; 
+
+int kVal;
+int switchval; 
+
+const int quietKnock = 5; 
+const int loudKnock = 100 
+
+boolean locked = false; 
+int numberofknocks = 0;
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}
