@@ -1,25 +1,114 @@
-void setup() {
-  // put your setup code here, to run once:
 #include <Servo.h>
-Servo myservo;
-const int piezo = AO;
+//Servo library included 
+Servo myServo;
+const int piezo = A0;
 const int switchPin = 2;
 const int yellowLed = 3; 
 const int greenLed = 4; 
 const int redLed = 5;
-const int Servo = 9; 
 
-int kVal;
-int switchval; 
+int knockVal;
+int switchVal; 
 
 const int quietKnock = 5; 
-const int loudKnock = 100 
+const int loudKnock = 100; 
 
 boolean locked = false; 
-int numberofknocks = 0;
-}
+int numberOfKnocks = 0;
 
+
+void setup() {
+  // Servo pin 9 
+ myServo.attach(9); 
+
+ pinMode(yellowLed, OUTPUT); 
+ pinMode(redLed, OUTPUT); 
+ pinMode(greenLed, OUTPUT);
+
+ 
+ pinMode(switchPin, INPUT);
+ Serial.begin(9600); 
+
+ digitalWrite(greenLed, HIGH); 
+
+ myServo.write(0); 
+
+
+Serial.println("Box is Unlocked");
+}
+ 
 void loop() {
   // put your main code here, to run repeatedly:
+if (locked == false) {
 
+  switchVal = digitalRead(switchPin);
+
+  if (switchVal == HIGH); {
+  locked = true; 
+
+  digitalWrite(greenLed, LOW); 
+  digitalWrite(redLed, HIGH);
+
+  myServo.write(90); 
+
+  Serial.println("Box is Locked");
+
+  delay(1500); 
+  }
+}
+
+if (locked == true) {
+
+  knockVal = analogRead(piezo);
+
+  if (numberOfKnocks < 5 && knockVal > 0){
+
+    if (checkForKnock(knockVal) == true) {
+
+      numberOfKnocks++;
+    }
+
+    Serial.print(5 - numberOfKnocks);
+    Serial.println ("Needs additional knocks"); 
+    }
+
+    if (numberOfKnocks >= 5) {
+      locked = false;
+
+      myServo.write(0); 
+
+      delay(15);
+      
+      digitalWrite(greenLed, HIGH);
+      digitalWrite(redLed, LOW);
+      Serial.println("Unlocked!");
+
+      numberOfKnocks = 0;
+    }
+  }
+}
+
+//  detects knock is within max and min range
+bool checkForKnock(int value) {
+  // if the value of the knock is greater than the minimum, and larger
+  // than the maximum
+  if (value > quietKnock && value < loudKnock) {
+    // turn the status LED on
+    digitalWrite(yellowLed, HIGH);
+    delay(60);
+    digitalWrite(yellowLed, LOW);
+    // print out the status
+    Serial.print("Valid knock of value ");
+    Serial.println(value);
+    // return true
+    return true;
+  }
+  // if the knock is not within range
+  else {
+    // print status
+    Serial.print("Bad knock value ");
+    Serial.println(value);
+    // return false
+    return false;
+  }
 }
